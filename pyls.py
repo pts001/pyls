@@ -39,13 +39,26 @@ def handle_path(dir_: dict, search_key: str)-> dict:
             if sub_dir["name"]==search_key:
                 return sub_dir
 
+# converts file size to human readable formats
+# i.e-bytes to KB,MB and GB
+def convert_file_size(size):
+    if size>=1024:
+        size_kb = round(size/1024,1)
+        if size_kb>=1024:
+            size_mb = round(size_kb/1024,1)
+            if size_mb>=1024:
+                size_gb = round(size_mb/1024,1)
+                return f"{size_gb}G"
+            return f"{size_mb}M"
+        return f"{size_kb}K"
+    return size
+
 def read_info(**kwargs: dict)-> str:
     json_data = read_json(JSON_FILE_PATH)
     contents=json_data["contents"]
     if kwargs["path"]:
         # handles target path if arg supplied from cli
         contents=handle_path(json_data, kwargs["path"])
-        print(contents)
         if contents is None:
             # returns error message on incorrect path
             return f"error: cannot access '{kwargs['path']}': No such file or directory"
@@ -76,7 +89,8 @@ def read_info(**kwargs: dict)-> str:
             # coverts the epoch time into human readable date-time form
             datetime_obj = datetime.fromtimestamp(content["time_modified"])
             str_time=datetime.strftime(datetime_obj,"%b %d %H:%M")
-            row=f'{content["permissions"]} {content["size"]: >4} {str_time} {content["name"]}'                    
+            content_size=convert_file_size(content["size"])
+            row=f'{content["permissions"]} {content_size: >4} {str_time} {content["name"]}'                    
             info_table+=f"{row}\n"
         return info_table.strip()
     # returns only the names if no argument given
@@ -84,13 +98,12 @@ def read_info(**kwargs: dict)-> str:
     content_names=" ".join(name_list)
     return content_names
 
-arg_dict={
-            'A': False,
-            'l': True,
-            'r': True,
-            't': True,
-            'filter': None,
-            'path': "parserk"
-        }
+# arg_dict={
+#             'A': False,
+#             'l': True,
+#             'r': True,
+#             't': True,
+#             'filter': None,
+#             'path': 'parser'
+#         }
 
-print(read_info(**arg_dict))
