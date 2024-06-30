@@ -1,5 +1,7 @@
 import os
+import re
 import json
+import argparse
 from datetime import datetime
 
 # base path of the project directory
@@ -17,6 +19,7 @@ def read_json(json_file: str)-> dict:
 def handle_path(dir_: dict, search_key: str)-> dict:
     if search_key in [".", "./"]:
         return dir_
+    search_key=re.sub("^./","",search_key)
     dir_name=search_key.split("/")
     if len(dir_name)>1:
         full_path=""
@@ -98,12 +101,22 @@ def read_info(**kwargs: dict)-> str:
     content_names=" ".join(name_list)
     return content_names
 
-# arg_dict={
-#             'A': False,
-#             'l': True,
-#             'r': True,
-#             't': True,
-#             'filter': None,
-#             'path': 'parser'
-#         }
+def main():
+    parser = argparse.ArgumentParser()
+    # parse arguments from cli
+    # all optional argument's values are False by default
+    # becomes True if supplied from cli 
+    parser.add_argument("--filter", help="Filters outputs by dir or file")
+    parser.add_argument("-r", help="Reverses the output", action='store_true')
+    parser.add_argument("-l", help="Prints detail info of the files/dirs", action='store_true')
+    parser.add_argument("-t", help="Sorts the output in by time modified", action='store_true')
+    parser.add_argument("-A", help="Lists all the files/dirs of a current dir",action='store_true')
+    # path is a positional argument, having default value False
+    parser.add_argument("path", default=False, nargs="?", help="Prints subdirs/files under given path")
+    # coverts all the argument values into dict
+    kwargs=parser.parse_args().__dict__
+    print(read_info(**kwargs))
+    
+if __name__=="__main__":
+    main()
 
