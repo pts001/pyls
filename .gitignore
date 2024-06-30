@@ -1,3 +1,6 @@
 __pycache__
 tests/__pycache__
 tests/.pytest_cache
+*.json
+build
+pyls.egg-info

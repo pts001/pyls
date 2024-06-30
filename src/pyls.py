@@ -4,10 +4,8 @@ import json
 import argparse
 from datetime import datetime
 
-# base path of the project directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # file path of the json file which contains information of a directory
-JSON_FILE_PATH = os.path.join(BASE_DIR, "structure.json") 
+JSON_FILE_PATH = os.environ["DIR_STRUCTURE_FILE"]
 
 # reads json file and returns python object
 def read_json(json_file: str)-> dict:

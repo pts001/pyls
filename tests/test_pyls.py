@@ -1,5 +1,12 @@
-from ..pyls import read_info
+import os
+import sys
 from .expected_outputs import *
+
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+print(BASE_PATH)
+sys.path.append(os.path.join(BASE_PATH,'src'))
+
+from pyls import read_info
 
 # the read_info takes only keyword arguments as dict
 def get_arg_dict(inp_dict:dict)->dict:
